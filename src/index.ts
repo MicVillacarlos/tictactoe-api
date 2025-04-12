@@ -1,10 +1,12 @@
 import express from "express";
 import "reflect-metadata";
+import cors from 'cors';
 import { config } from "./config/config";
 import { connectDB } from "./db/connect";
 import gameRoutes from './modules/game/game.routes'; 
 
 const app = express();
+app.use(cors({ origin: 'http://localhost:3000' }));
 
 // ✅ Middleware
 app.use(express.json());

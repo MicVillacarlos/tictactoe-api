@@ -1,18 +1,16 @@
 import express from "express";
 import "reflect-metadata";
-import cors from 'cors';
+import cors from "cors";
 import { config } from "./config/config";
 import { connectDB } from "./db/connect";
-import gameRoutes from './modules/game/game.routes'; 
+import gameRoutes from "./modules/game/game.routes";
+import roundRoutes from "./modules/round/round.routes";
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: config.feUrl }));
 
-// ✅ Middleware
 app.use(express.json());
-
-// Routes
-app.use('/api', gameRoutes); // base route
+app.use("/api", gameRoutes, roundRoutes);
 
 connectDB().then(() => {
   app.listen(config.port, () => {

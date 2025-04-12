@@ -20,8 +20,13 @@ export class GameService {
       const game = await Game.create(gameData);
 
       return { success: true, game };
-    } catch (error: any) {
-      return { success: false, error: error.message || "Unknown error" };
+    } catch (error) {
+      
+      const errorMessage =
+      (error as { message?: string })?.message ||
+        "An unexpected error occurred.";
+      
+      return { success: false, error: errorMessage || "Unknown error" };
     }
   }
 }

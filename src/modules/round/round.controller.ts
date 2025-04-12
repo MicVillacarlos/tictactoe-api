@@ -13,3 +13,13 @@ export const addRound = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Failed to create round" });
   }
 };
+
+export const updateBoard = async (req: Request, res: Response) => {
+  try {
+    const { board } = req.body;
+    const newRound = await roundService.updateBoard(req.params.id, board);
+    res.status(201).json(newRound);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to update round" });
+  }
+};

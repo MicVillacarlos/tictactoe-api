@@ -17,8 +17,23 @@ export const addRound = async (req: Request, res: Response) => {
 export const updateBoard = async (req: Request, res: Response) => {
   try {
     const { board } = req.body;
-    const newRound = await roundService.updateBoard(req.params.id, board);
-    res.status(201).json(newRound);
+    const round = await roundService.updateBoard(req.params.id, board);
+    res.status(201).json(round);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to update round" });
+  }
+};
+
+export const updateRound = async (req: Request, res: Response) => {
+  try {
+    const { board, winner, status } = req.body;
+    const round = await roundService.updateRound(
+      req.params.id,
+      board,
+      winner,
+      status
+    );
+    res.status(201).json(round);
   } catch (err) {
     res.status(400).json({ error: "Failed to update round" });
   }

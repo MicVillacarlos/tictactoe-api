@@ -3,10 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IRound extends Document {
   game_id: string;
   board: string[];
-  winner: {
-    name: string;
-    type: 'x' | 'o';
-  } | null;
+  winner: 'X' | 'O' | null;
   status: 'incomplete' | 'draw' | 'completed';
 }
 
@@ -15,12 +12,12 @@ const RoundSchema: Schema = new Schema(
     game_id: { type: String, required: true },
     board: { type: [String], required: true },
     winner: {
-      name: { type: String },
-      type: { type: String, enum: ['x', 'o'] },
+      type: String,
+      enum: ["X", "O"],
     },
     status: {
       type: String,
-      enum: ['incomplete', 'draw', 'completed'],
+      enum: ["incomplete", "draw", "completed"],
       required: true,
     },
   },

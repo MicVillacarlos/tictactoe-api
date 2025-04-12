@@ -48,4 +48,30 @@ export class RoundService {
       return { success: false, error: errorMessage };
     }
   }
+
+  async updateRound(
+    _id: string,
+    board: string[],
+    winner: string | null,
+    status: string
+  ): Promise<{ success: boolean; round?: IRound; error?: string }> {
+    try {
+      const round = await Round.findByIdAndUpdate(
+        _id,
+        { $set: { board, winner, status } },
+        { new: true }
+      );
+
+      if (!round) {
+        return { success: false, error: "Round not found" };
+      }
+
+      return { success: true, round };
+    } catch (error) {
+      const errorMessage =
+        (error as { message?: string })?.message ||
+        "An unexpected error occurred.";
+      return { success: false, error: errorMessage };
+    }
+  }
 }

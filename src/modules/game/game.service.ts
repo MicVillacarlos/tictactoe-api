@@ -1,7 +1,7 @@
 import { Service } from "typedi";
 import { Game } from "./game.model";
 import { PipelineStage } from "mongoose";
-import { IGame } from "./type";
+import { FetchGameData, IGame } from "./type";
 
 @Service()
 export class GameService {
@@ -27,7 +27,7 @@ export class GameService {
     }
   }
 
-  async fetchGames(page: number, limit: number):Promise<{ count?: number; data?: any, error?:string }> {
+  async fetchGames(page: number, limit: number):Promise<{ count?: number; data?: FetchGameData[], error?:string }> {
     try {
       const skip = (page - 1) * limit;
       const fetchAggregation: PipelineStage[] = [

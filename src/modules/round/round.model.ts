@@ -1,11 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose';
-
-export interface IRound extends Document {
-  game_id: string;
-  board: string[];
-  winner: 'X' | 'O' | null;
-  status: 'incomplete' | 'draw' | 'completed';
-}
+import mongoose, { Schema } from 'mongoose';
+import { IRound } from './type';
 
 const RoundSchema: Schema = new Schema(
   {

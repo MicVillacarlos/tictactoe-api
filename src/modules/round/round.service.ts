@@ -1,7 +1,8 @@
 import { Service } from "typedi";
-import { Round, IRound } from "./round.model";
-import { Game } from "../game/game.model"
-import mongoose from "mongoose";
+import { Round } from "./round.model";
+import { Game } from "../game/game.model";
+import mongoose, { PipelineStage } from "mongoose";
+import { FetchRoundData, IRound } from "./type";
 
 @Service()
 export class RoundService {
@@ -82,6 +83,100 @@ export class RoundService {
         (error as { message?: string })?.message ||
         "An unexpected error occurred.";
       return { success: false, error: errorMessage };
+    }
+  }
+
+  async fetchRounds(
+    gameId: string,
+    page: number,
+    limit: number
+  ): Promise<{ count?: number; data?: FetchRoundData[]; error?: string }> {
+    try {
+
+      const skip = (page - 1) * limit;
+      const fetchAggregation: PipelineStage[] = [
+        {
+          $match: {
+            game_id: new mongoose.Types.ObjectId(gameId),
+          },
+        },
+        {
+          $lookup: {
+            from: "games",
+            localField: "game_id",
+            foreignField: "_id",
+            as: "game",
+          },
+        },
+        {
+          $unwind: "$game",
+        },
+        {
+          $addFields: {
+            winnerName: {
+              $cond: {
+                if: { $eq: ["$winner", "X"] },
+                then: "$game.playerX.name",
+                else: {
+                  $cond: {
+                    if: { $eq: ["$winner", "O"] },
+                    then: "$game.playerO.name",
+                    else: null,
+                  },
+                },
+              },
+            },
+            loserName: {
+              $cond: {
+                if: { $eq: ["$winner", "X"] },
+                then: "$game.playerO.name",
+                else: {
+                  $cond: {
+                    if: { $eq: ["$winner", "O"] },
+                    then: "$game.playerX.name",
+                    else: null,
+                  },
+                },
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            game: 0,
+          },
+        },
+        { $sort: { createdAt: 1 } },
+        { $skip: skip },
+        { $limit: limit },
+      ];
+
+      const countAggregation: PipelineStage[] = [
+        {
+          $match: {
+            game_id: new mongoose.Types.ObjectId(gameId),
+          },
+        },
+        {
+          $count: "count",
+        },
+      ];
+
+      const [count, result] = await Promise.all([
+        Round.aggregate(countAggregation),
+        Round.aggregate(fetchAggregation),
+      ]);
+
+      return {
+        count: count[0]?.count ?? 0,
+        data: result,
+      };
+    } catch (error) {
+      const errorMessage =
+        (error as { message?: string })?.message ||
+        "An unexpected error occurred.";
+
+      return { error: errorMessage || "Unknown error" };
     }
   }
 }

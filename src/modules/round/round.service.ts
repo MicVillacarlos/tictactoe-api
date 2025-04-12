@@ -1,5 +1,7 @@
 import { Service } from "typedi";
 import { Round, IRound } from "./round.model";
+import { Game } from "../game/game.model"
+import mongoose from "mongoose";
 
 @Service()
 export class RoundService {
@@ -8,7 +10,7 @@ export class RoundService {
   ): Promise<{ success: boolean; round?: IRound; error?: string }> {
     try {
       const roundData = {
-        game_id: game_id,
+        game_id: new mongoose.Types.ObjectId(game_id),
         board: Array(9).fill(""),
         winner: null,
         status: "incomplete",
@@ -64,6 +66,14 @@ export class RoundService {
 
       if (!round) {
         return { success: false, error: "Round not found" };
+      }
+
+      if (winner === "X" || winner === "O") {
+        const updateField = winner === "X" ? "playerX.score" : "playerO.score";
+
+        await Game.findByIdAndUpdate(round.game_id, {
+          $inc: { [updateField]: 1 },
+        });
       }
 
       return { success: true, round };

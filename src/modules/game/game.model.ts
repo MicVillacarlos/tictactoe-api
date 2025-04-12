@@ -1,14 +1,5 @@
-import mongoose, { Schema, Document } from "mongoose";
-
-export interface IPlayer {
-  name: string;
-  score: number;
-}
-
-export interface IGame extends Document {
-  playerX: IPlayer;
-  playerO: IPlayer;
-}
+import mongoose, { Schema } from "mongoose";
+import { IGame } from "./type";
 
 const PlayerSchema: Schema = new Schema({
   name: { type: String, required: true },

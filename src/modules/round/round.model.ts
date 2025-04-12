@@ -9,7 +9,7 @@ export interface IRound extends Document {
 
 const RoundSchema: Schema = new Schema(
   {
-    game_id: { type: String, required: true },
+    game_id: { type: mongoose.Schema.Types.ObjectId, ref: "Game", required: true },
     board: { type: [String], required: true },
     winner: {
       type: String,

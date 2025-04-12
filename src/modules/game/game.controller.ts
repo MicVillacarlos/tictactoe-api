@@ -13,3 +13,13 @@ export const addGame = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Failed to create game" });
   }
 };
+
+export const fetchGames = async (req: Request, res: Response) => {
+  try {
+    const { limit, page } = req.params;
+    const game = await gameService.fetchGames(Number(page), Number(limit));
+    res.status(201).json(game);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to fetch" });
+  }
+};

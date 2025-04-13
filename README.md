@@ -18,14 +18,6 @@ This is the backend API for the Tic Tac Toe game, built with **Express**, **Type
 Example endpoint:  
 `GET https://tictactoe-api-qfrz.onrender.com/api/games/1/10`
 
-## 📁 Folder Structure
-
-src/ ├── config/ # Environment configs ├── db/ # MongoDB connection ├── modules/ # Feature-based modules (game, round) │ ├── game/ │ └── round/ ├── index.ts # Entry point
-
-bash
-Copy
-Edit
-
 ## 🛠️ Setup Instructions
 
 ### 1. Clone the repo

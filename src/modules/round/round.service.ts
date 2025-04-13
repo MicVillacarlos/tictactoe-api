@@ -146,7 +146,14 @@ export class RoundService {
             game: 0,
           },
         },
-        { $sort: { createdAt: 1 } },
+        {
+          $setWindowFields: {
+            sortBy: { createdAt: 1 }, 
+            output: {
+              roundNum: { $rank: {} },
+            },
+          },
+        },
         { $skip: skip },
         { $limit: limit },
       ];

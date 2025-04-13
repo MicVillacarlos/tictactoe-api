@@ -18,4 +18,5 @@ export interface FetchRoundData {
   __v: number;
   winnerName?: string;
   loserName?: string;
+  roundNum?: number;
 }

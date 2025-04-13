@@ -1,6 +1,6 @@
 import { Service } from "typedi";
 import { Game } from "./game.model";
-import { PipelineStage } from "mongoose";
+import mongoose, { PipelineStage } from "mongoose";
 import { FetchGameData, IGame } from "./type";
 
 @Service()
@@ -27,7 +27,10 @@ export class GameService {
     }
   }
 
-  async fetchGames(page: number, limit: number):Promise<{ count?: number; data?: FetchGameData[], error?:string }> {
+  async fetchGames(
+    page: number,
+    limit: number
+  ): Promise<{ count?: number; data?: FetchGameData[]; error?: string }> {
     try {
       const skip = (page - 1) * limit;
       const fetchAggregation: PipelineStage[] = [
@@ -77,13 +80,62 @@ export class GameService {
         count: count[0]?.count ?? 0,
         data: result,
       };
-
     } catch (error) {
       const errorMessage =
         (error as { message?: string })?.message ||
         "An unexpected error occurred.";
 
       return { error: errorMessage || "Unknown error" };
+    }
+  }
+
+
+  async getGame(id: string): Promise<{ game?: FetchGameData; error?: string }> {
+    try {
+      
+      const fetchAggregation: PipelineStage[] = [
+        {
+          $match: {
+            _id: new mongoose.Types.ObjectId(id),
+          },
+        },
+        {
+          $lookup: {
+            from: "rounds",
+            localField: "_id",
+            foreignField: "game_id",
+            as: "rounds",
+          },
+        },
+        {
+          $addFields: {
+            rounds: { $size: "$rounds" },
+            draws: {
+              $size: {
+                $filter: {
+                  input: "$rounds",
+                  as: "round",
+                  cond: { $eq: ["$$round.status", "draw"] },
+                },
+              },
+            },
+          },
+        },
+      ];
+
+    const gameResult = await Game.aggregate<FetchGameData>(fetchAggregation);
+    const game = gameResult[0]; 
+
+      if (!game) {
+        return { error: "Game not found." };
+      }
+
+      return { game };
+    } catch (error) {
+      const errorMessage =
+        (error as Error)?.message || "An unexpected error occurred.";
+
+      return { error: errorMessage };
     }
   }
 }

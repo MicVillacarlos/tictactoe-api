@@ -23,3 +23,13 @@ export const fetchGames = async (req: Request, res: Response) => {
     res.status(400).json({ error: "Failed to fetch" });
   }
 };
+
+export const getGame = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const game = await gameService.getGame(id)
+    res.status(201).json(game);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to fetch" });
+  }
+};

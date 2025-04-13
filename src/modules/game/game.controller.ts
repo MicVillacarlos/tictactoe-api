@@ -18,7 +18,7 @@ export const fetchGames = async (req: Request, res: Response) => {
   try {
     const { limit, page } = req.params;
     const game = await gameService.fetchGames(Number(page), Number(limit));
-    console.log("Sending back games:", game);
+
     res.status(200).json(game);
   } catch (err) {
     res.status(400).json({ error: "Failed to fetch" });

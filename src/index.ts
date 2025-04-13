@@ -7,6 +7,12 @@ import gameRoutes from "./modules/game/game.routes";
 import roundRoutes from "./modules/round/round.routes";
 
 const app = express();
+
+app.use((req, res, next) => {
+  res.setHeader("Content-Encoding", "identity");
+  next();
+});
+
 app.use(
   cors({
     origin: config.feUrl,

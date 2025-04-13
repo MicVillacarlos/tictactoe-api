@@ -18,7 +18,7 @@ export const updateBoard = async (req: Request, res: Response) => {
   try {
     const { board } = req.body;
     const round = await roundService.updateBoard(req.params.id, board);
-    res.status(201).json(round);
+    res.status(200).json(round);
   } catch (err) {
     res.status(400).json({ error: "Failed to update round" });
   }
@@ -33,7 +33,7 @@ export const updateRound = async (req: Request, res: Response) => {
       winner,
       status
     );
-    res.status(201).json(round);
+    res.status(200).json(round);
   } catch (err) {
     res.status(400).json({ error: "Failed to update round" });
   }
@@ -43,7 +43,7 @@ export const fetchRounds = async (req: Request, res: Response) => {
   try {
     const { gameId, limit, page } = req.params;
     const game = await roundService.fetchRounds(gameId,Number(page), Number(limit));
-    res.status(201).json(game);
+    res.status(200).json(game);
   } catch (err) {
     res.status(400).json({ error: "Failed to fetch" });
   }
